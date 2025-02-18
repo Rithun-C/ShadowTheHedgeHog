@@ -77,10 +77,10 @@ def draw_maze(screen, offset_x, offset_y):
     screen.blit(end_img, end_position)
 
 def draw_buttons(screen):
-    restart_button = pygame.Rect(630, 20, 150, 50)
-    end_button = pygame.Rect(680, 20, 150, 50)
-    screen.blit(restart_img, (630, 20))
-    screen.blit(exit_img, (680, 20))
+    restart_button = pygame.Rect(735, 70, 150, 50)
+    end_button = pygame.Rect(735, 20, 150, 50)
+    screen.blit(restart_img, (735, 70))
+    screen.blit(exit_img, (735, 20))
     return restart_button, end_button
 
 def game_loop():
