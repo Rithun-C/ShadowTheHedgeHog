@@ -9,19 +9,26 @@ CELL_SIZE = 60
 PLAYER_SIZE = CELL_SIZE - 10
 SPEED = CELL_SIZE
 
-m = Maze()
-m.generator = Prims(5, 5)
-m.generate()
+def generate_maze():
+    m = Maze()
+    m.generator = Prims(5, 5)
+    m.generate()
 
-m.transmuters = [Perturbation(repeat=1, new_walls=3)]
-m.transmute()
+    m.transmuters = [Perturbation(repeat=1, new_walls=3)]
+    m.transmute()
 
-maze = m.grid
-maze_walls = {
-    (x * CELL_SIZE, y * CELL_SIZE)
-    for y, row in enumerate(maze)
-    for x, cell in enumerate(row) if cell == 1
-}
+    return m.grid
+
+maze = generate_maze()
+
+def create_maze_walls():
+    return {
+        (x * CELL_SIZE, y * CELL_SIZE)
+        for y, row in enumerate(maze)
+        for x, cell in enumerate(row) if cell == 1
+    }
+
+maze_walls = create_maze_walls()
 
 character_img = pygame.image.load('images/Character.png')
 wall_img = pygame.image.load('images/Wall.jpg')
@@ -62,6 +69,8 @@ def game_loop():
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     clock = pygame.time.Clock()
 
+    global maze, maze_walls
+
     maze_width = len(maze[0]) * CELL_SIZE
     maze_height = len(maze) * CELL_SIZE
 
@@ -85,7 +94,14 @@ def game_loop():
         if keys[pygame.K_RIGHT]: player.move(1, 0, offset_x, offset_y)
         if keys[pygame.K_UP]: player.move(0, -1, offset_x, offset_y)
         if keys[pygame.K_DOWN]: player.move(0, 1, offset_x, offset_y)
+
         player.draw(screen, offset_x, offset_y)
+
+        if (player.x - offset_x) // CELL_SIZE == 9 and (player.y - offset_y) // CELL_SIZE == 9:
+            maze = generate_maze()
+            maze_walls = create_maze_walls()
+            player = Player(1, 1, offset_x, offset_y)
+
         pygame.display.flip()
         clock.tick(30)
 
