@@ -38,11 +38,15 @@ character_img = pygame.image.load('images/Character.png')
 wall_img = pygame.image.load('images/Wall.jpg')
 path_img = pygame.image.load('images/Path.png')
 end_img = pygame.image.load('images/Teleport.png')
+restart_img = pygame.image.load('images/Restart.png')
+exit_img = pygame.image.load('images/Exit.png')
 
 character_img = pygame.transform.scale(character_img, (PLAYER_SIZE, PLAYER_SIZE))
 wall_img = pygame.transform.scale(wall_img, (CELL_SIZE, CELL_SIZE))
 path_img = pygame.transform.scale(path_img, (CELL_SIZE, CELL_SIZE))
 end_img = pygame.transform.scale(end_img, (CELL_SIZE, CELL_SIZE))
+restart_img = pygame.transform.scale(restart_img, (50, 50))
+exit_img = pygame.transform.scale(exit_img, (50, 50))
 
 class Player:
     def __init__(self, x, y, offset_x, offset_y):
@@ -73,13 +77,10 @@ def draw_maze(screen, offset_x, offset_y):
     screen.blit(end_img, end_position)
 
 def draw_buttons(screen):
-    font = pygame.font.Font(None, 36)
-    restart_button = pygame.Rect(100, 20, 150, 50)
-    end_button = pygame.Rect(550, 20, 150, 50)
-    pygame.draw.rect(screen, (0, 255, 0), restart_button)
-    pygame.draw.rect(screen, (255, 0, 0), end_button)
-    screen.blit(font.render("Restart", True, (0, 0, 0)), (130, 35))
-    screen.blit(font.render("End", True, (0, 0, 0)), (600, 35))
+    restart_button = pygame.Rect(630, 20, 150, 50)
+    end_button = pygame.Rect(680, 20, 150, 50)
+    screen.blit(restart_img, (630, 20))
+    screen.blit(exit_img, (680, 20))
     return restart_button, end_button
 
 def game_loop():
@@ -121,7 +122,6 @@ def game_loop():
 
         player.draw(screen)
 
-        # Check if player reaches the endpoint
         if (player.x - offset_x) // CELL_SIZE == end_x and (player.y - offset_y) // CELL_SIZE == end_y:
             maze = generate_maze()
             maze_walls = create_maze_walls(maze)
