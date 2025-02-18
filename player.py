@@ -72,6 +72,14 @@ def draw_maze(screen, offset_x, offset_y):
     end_position = (end_x * CELL_SIZE + offset_x, end_y * CELL_SIZE + offset_y)
     screen.blit(end_img, end_position)
 
+def draw_exit_button(screen):
+    button_rect = pygame.Rect(SCREEN_WIDTH - 100, 10, 80, 40)
+    pygame.draw.rect(screen, (200, 0, 0), button_rect)
+    font = pygame.font.Font(None, 30)
+    text = font.render("Exit", True, (255, 255, 255))
+    screen.blit(text, (SCREEN_WIDTH - 80, 20))
+    return button_rect
+
 def game_loop():
     pygame.init()
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -90,10 +98,14 @@ def game_loop():
     while running:
         screen.fill((0, 0, 0))
         draw_maze(screen, offset_x, offset_y)
+        exit_button_rect = draw_exit_button(screen)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if exit_button_rect.collidepoint(event.pos):
+                    running = False
 
         keys = pygame.key.get_pressed()
         time.sleep(0.1)
@@ -104,7 +116,6 @@ def game_loop():
 
         player.draw(screen)
 
-        # Check if player reaches the endpoint
         if (player.x - offset_x) // CELL_SIZE == end_x and (player.y - offset_y) // CELL_SIZE == end_y:
             maze = generate_maze()
             maze_walls = create_maze_walls(maze)
