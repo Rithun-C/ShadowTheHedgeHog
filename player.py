@@ -1,26 +1,24 @@
 import pygame
+from mazelib.mazelib import Maze
+from mazelib.generate.Prims import Prims
+from mazelib.transmute.Perturbation import Perturbation
 
-SCREEN_WIDTH, SCREEN_HEIGHT = 600, 600
-CELL_SIZE = 40
+SCREEN_WIDTH, SCREEN_HEIGHT = 800, 800
+CELL_SIZE = 60
 PLAYER_SIZE = CELL_SIZE - 10
 SPEED = CELL_SIZE
 
-DUMMY_MAZE = [
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 0, 0, 0, 1, 0, 0, 0, 0, 1],
-    [1, 0, 1, 0, 1, 0, 1, 1, 0, 1],
-    [1, 0, 1, 0, 0, 0, 1, 0, 0, 1],
-    [1, 0, 1, 1, 1, 1, 1, 0, 1, 1],
-    [1, 0, 0, 0, 0, 0, 1, 0, 0, 1],
-    [1, 1, 1, 1, 1, 0, 1, 1, 0, 1],
-    [1, 0, 0, 0, 1, 0, 0, 0, 0, 1],
-    [1, 0, 1, 0, 1, 1, 1, 1, 0, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-]
+m = Maze()
+m.generator = Prims(5, 5)
+m.generate()
 
+m.transmuters = [Perturbation(repeat=1, new_walls=3)]
+m.transmute()
+
+maze = m.grid
 maze_walls = {
     (x * CELL_SIZE, y * CELL_SIZE)
-    for y, row in enumerate(DUMMY_MAZE)
+    for y, row in enumerate(maze)
     for x, cell in enumerate(row) if cell == 1
 }
 
@@ -33,26 +31,26 @@ wall_img = pygame.transform.scale(wall_img, (CELL_SIZE, CELL_SIZE))
 path_img = pygame.transform.scale(path_img, (CELL_SIZE, CELL_SIZE))
 
 class Player:
-    def __init__(self, x, y):
-        self.x = x * CELL_SIZE
-        self.y = y * CELL_SIZE
+    def __init__(self, x, y, offset_x, offset_y):
+        self.x = x * CELL_SIZE + offset_x
+        self.y = y * CELL_SIZE + offset_y
         self.size = PLAYER_SIZE
         self.speed = SPEED
 
-    def move(self, dx, dy):
+    def move(self, dx, dy, offset_x, offset_y):
         new_x = self.x + dx * self.speed
         new_y = self.y + dy * self.speed
-        if (new_x, new_y) not in maze_walls:
+        if (new_x - offset_x, new_y - offset_y) not in maze_walls:
             self.x = new_x
             self.y = new_y
 
-    def draw(self, screen):
+    def draw(self, screen, offset_x, offset_y):
         screen.blit(character_img, (self.x + 5, self.y + 5))
 
-def draw_maze(screen):
-    for y, row in enumerate(DUMMY_MAZE):
+def draw_maze(screen, offset_x, offset_y):
+    for y, row in enumerate(maze):
         for x, cell in enumerate(row):
-            cell_position = (x * CELL_SIZE, y * CELL_SIZE)
+            cell_position = (x * CELL_SIZE + offset_x, y * CELL_SIZE + offset_y)
             if cell == 1:
                 screen.blit(wall_img, cell_position)
             elif cell == 0:
@@ -63,24 +61,30 @@ def game_loop():
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     clock = pygame.time.Clock()
 
-    player = Player(1, 1)
+    maze_width = len(maze[0]) * CELL_SIZE
+    maze_height = len(maze) * CELL_SIZE
+
+    offset_x = (SCREEN_WIDTH - maze_width) // 2
+    offset_y = (SCREEN_HEIGHT - maze_height) // 2
+
+    player = Player(1, 1, offset_x, offset_y)
 
     running = True
     while running:
         screen.fill((0, 0, 0))
-        draw_maze(screen)
+        draw_maze(screen, offset_x, offset_y)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
 
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_LEFT]: player.move(-1, 0)
-        if keys[pygame.K_RIGHT]: player.move(1, 0)
-        if keys[pygame.K_UP]: player.move(0, -1)
-        if keys[pygame.K_DOWN]: player.move(0, 1)
+        if keys[pygame.K_LEFT]: player.move(-1, 0, offset_x, offset_y)
+        if keys[pygame.K_RIGHT]: player.move(1, 0, offset_x, offset_y)
+        if keys[pygame.K_UP]: player.move(0, -1, offset_x, offset_y)
+        if keys[pygame.K_DOWN]: player.move(0, 1, offset_x, offset_y)
 
-        player.draw(screen)
+        player.draw(screen, offset_x, offset_y)
         pygame.display.flip()
         clock.tick(30)
 
