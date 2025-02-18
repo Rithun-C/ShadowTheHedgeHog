@@ -72,6 +72,16 @@ def draw_maze(screen, offset_x, offset_y):
     end_position = (end_x * CELL_SIZE + offset_x, end_y * CELL_SIZE + offset_y)
     screen.blit(end_img, end_position)
 
+def draw_buttons(screen):
+    font = pygame.font.Font(None, 36)
+    restart_button = pygame.Rect(100, 20, 150, 50)
+    end_button = pygame.Rect(550, 20, 150, 50)
+    pygame.draw.rect(screen, (0, 255, 0), restart_button)
+    pygame.draw.rect(screen, (255, 0, 0), end_button)
+    screen.blit(font.render("Restart", True, (0, 0, 0)), (130, 35))
+    screen.blit(font.render("End", True, (0, 0, 0)), (600, 35))
+    return restart_button, end_button
+
 def game_loop():
     pygame.init()
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -90,10 +100,17 @@ def game_loop():
     while running:
         screen.fill((0, 0, 0))
         draw_maze(screen, offset_x, offset_y)
+        restart_button, end_button = draw_buttons(screen)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = pygame.mouse.get_pos()
+                if restart_button.collidepoint(mouse_pos):
+                    player = Player(1, 1, offset_x, offset_y)
+                if end_button.collidepoint(mouse_pos):
+                    running = False
 
         keys = pygame.key.get_pressed()
         time.sleep(0.1)
