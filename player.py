@@ -37,7 +37,7 @@ end_x, end_y = set_random_endpoint(maze)
 character_img = pygame.image.load('images/Character.png')
 wall_img = pygame.image.load('images/Wall.jpg')
 path_img = pygame.image.load('images/Path.png')
-end_img = pygame.image.load('images/End.png')
+end_img = pygame.image.load('images/Teleport.png')
 
 character_img = pygame.transform.scale(character_img, (PLAYER_SIZE, PLAYER_SIZE))
 wall_img = pygame.transform.scale(wall_img, (CELL_SIZE, CELL_SIZE))
