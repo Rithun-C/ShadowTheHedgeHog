@@ -2,6 +2,7 @@ import pygame
 from mazelib.mazelib import Maze
 from mazelib.generate.Prims import Prims
 from mazelib.transmute.Perturbation import Perturbation
+import time
 
 SCREEN_WIDTH, SCREEN_HEIGHT = 800, 800
 CELL_SIZE = 60
@@ -79,11 +80,11 @@ def game_loop():
                 running = False
 
         keys = pygame.key.get_pressed()
+        time.sleep(0.1)
         if keys[pygame.K_LEFT]: player.move(-1, 0, offset_x, offset_y)
         if keys[pygame.K_RIGHT]: player.move(1, 0, offset_x, offset_y)
         if keys[pygame.K_UP]: player.move(0, -1, offset_x, offset_y)
         if keys[pygame.K_DOWN]: player.move(0, 1, offset_x, offset_y)
-
         player.draw(screen, offset_x, offset_y)
         pygame.display.flip()
         clock.tick(30)
