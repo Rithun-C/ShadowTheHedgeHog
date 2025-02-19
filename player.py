@@ -12,7 +12,7 @@ SPEED = CELL_SIZE
 
 score = 1
 completion_count = 0
-increase_factor = 1.0
+increase_factor = 0.1
 
 def generate_maze():
     m = Maze()
@@ -95,8 +95,8 @@ def draw_buttons(screen):
 
 def draw_score(screen):
     font = pygame.font.Font(None, 36)
-    score_text = font.render(f"Score: {score}", True, (255, 255, 255))
-    screen.blit(score_text, (10, 10))
+    score_text = font.render(f"SCORE: {score}", True, (255, 255, 255))
+    screen.blit(score_text, (365, 40))
 
 def game_loop():
     pygame.init()
