@@ -11,8 +11,6 @@ PLAYER_SIZE = CELL_SIZE - 10
 SPEED = CELL_SIZE
 
 score = 0
-completion_count = 0
-increase_factor = 0.1
 TIME_LIMIT = 30
 
 def generate_maze():
@@ -156,10 +154,7 @@ def game_loop():
         player.draw(screen)
 
         if (player.x - offset_x) // CELL_SIZE == end_x and (player.y - offset_y) // CELL_SIZE == end_y:
-            completion_count += 1
-            if completion_count % 5 == 0:
-                increase_factor *= 1.2
-            score += int(10 * increase_factor)
+            score += 1
 
             maze = generate_maze()
             maze_walls = create_maze_walls(maze)
