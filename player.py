@@ -10,6 +10,10 @@ CELL_SIZE = 60
 PLAYER_SIZE = CELL_SIZE - 10
 SPEED = CELL_SIZE
 
+score = 1
+completion_count = 0
+increase_factor = 1.0
+
 def generate_maze():
     m = Maze()
     m.generator = Prims(5, 5)
@@ -89,12 +93,17 @@ def draw_buttons(screen):
 
     return restart_button, end_button, idea_button
 
+def draw_score(screen):
+    font = pygame.font.Font(None, 36)
+    score_text = font.render(f"Score: {score}", True, (255, 255, 255))
+    screen.blit(score_text, (10, 10))
+
 def game_loop():
     pygame.init()
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     clock = pygame.time.Clock()
 
-    global maze, maze_walls, end_x, end_y
+    global maze, maze_walls, end_x, end_y, score, completion_count, increase_factor
 
     maze_width = len(maze[0]) * CELL_SIZE
     maze_height = len(maze) * CELL_SIZE
@@ -108,6 +117,7 @@ def game_loop():
         screen.fill((0, 0, 0))
         draw_maze(screen, offset_x, offset_y)
         restart_button, end_button, idea_button = draw_buttons(screen)
+        draw_score(screen)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -131,6 +141,10 @@ def game_loop():
         player.draw(screen)
 
         if (player.x - offset_x) // CELL_SIZE == end_x and (player.y - offset_y) // CELL_SIZE == end_y:
+            completion_count += 1
+            if completion_count % 5 == 0:
+                increase_factor *= 1.2
+            score += int(10 * increase_factor)
             maze = generate_maze()
             maze_walls = create_maze_walls(maze)
             end_x, end_y = set_random_endpoint(maze)
