@@ -40,6 +40,7 @@ path_img = pygame.image.load('images/Path.png')
 end_img = pygame.image.load('images/Teleport.png')
 restart_img = pygame.image.load('images/Restart.png')
 exit_img = pygame.image.load('images/Exit.png')
+idea_img = pygame.image.load('images/Idea.png')
 
 character_img = pygame.transform.scale(character_img, (PLAYER_SIZE, PLAYER_SIZE))
 wall_img = pygame.transform.scale(wall_img, (CELL_SIZE, CELL_SIZE))
@@ -47,6 +48,7 @@ path_img = pygame.transform.scale(path_img, (CELL_SIZE, CELL_SIZE))
 end_img = pygame.transform.scale(end_img, (CELL_SIZE, CELL_SIZE))
 restart_img = pygame.transform.scale(restart_img, (50, 50))
 exit_img = pygame.transform.scale(exit_img, (50, 50))
+idea_img = pygame.transform.scale(idea_img, (50, 50))
 
 class Player:
     def __init__(self, x, y, offset_x, offset_y):
@@ -78,10 +80,14 @@ def draw_maze(screen, offset_x, offset_y):
 
 def draw_buttons(screen):
     restart_button = pygame.Rect(735, 70, 150, 50)
+    idea_button = pygame.Rect(735, 120, 150, 50)
     end_button = pygame.Rect(735, 20, 150, 50)
+
     screen.blit(restart_img, (735, 70))
     screen.blit(exit_img, (735, 20))
-    return restart_button, end_button
+    screen.blit(idea_img, (735, 120))
+
+    return restart_button, end_button, idea_button
 
 def game_loop():
     pygame.init()
@@ -101,7 +107,7 @@ def game_loop():
     while running:
         screen.fill((0, 0, 0))
         draw_maze(screen, offset_x, offset_y)
-        restart_button, end_button = draw_buttons(screen)
+        restart_button, end_button, idea_button = draw_buttons(screen)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -112,6 +118,8 @@ def game_loop():
                     player = Player(1, 1, offset_x, offset_y)
                 if end_button.collidepoint(mouse_pos):
                     running = False
+                if idea_button.collidepoint(mouse_pos):
+                    print("Idea button clicked!")
 
         keys = pygame.key.get_pressed()
         time.sleep(0.1)
