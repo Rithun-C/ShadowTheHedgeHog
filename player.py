@@ -10,9 +10,10 @@ CELL_SIZE = 60
 PLAYER_SIZE = CELL_SIZE - 10
 SPEED = CELL_SIZE
 
-score = 1
+score = 0
 completion_count = 0
 increase_factor = 0.1
+TIME_LIMIT = 30
 
 def generate_maze():
     m = Maze()
@@ -98,6 +99,11 @@ def draw_score(screen):
     score_text = font.render(f"SCORE: {score}", True, (255, 255, 255))
     screen.blit(score_text, (365, 40))
 
+def draw_timer(screen, time_left):
+    font = pygame.font.Font(None, 36)
+    timer_text = font.render(f"TIME: {time_left}", True, (255, 255, 255))
+    screen.blit(timer_text, (600, 40))
+
 def game_loop():
     pygame.init()
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -111,6 +117,7 @@ def game_loop():
     offset_y = (SCREEN_HEIGHT - maze_height) // 2
 
     player = Player(1, 1, offset_x, offset_y)
+    start_time = time.time()
 
     running = True
     while running:
@@ -118,6 +125,14 @@ def game_loop():
         draw_maze(screen, offset_x, offset_y)
         restart_button, end_button, idea_button = draw_buttons(screen)
         draw_score(screen)
+
+        elapsed_time = time.time() - start_time
+        time_left = max(0, TIME_LIMIT - int(elapsed_time))
+        draw_timer(screen, time_left)
+
+        if time_left == 0:
+            print("Time's up! Game Over.")
+            running = False
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -145,10 +160,12 @@ def game_loop():
             if completion_count % 5 == 0:
                 increase_factor *= 1.2
             score += int(10 * increase_factor)
+
             maze = generate_maze()
             maze_walls = create_maze_walls(maze)
             end_x, end_y = set_random_endpoint(maze)
             player = Player(1, 1, offset_x, offset_y)
+            start_time = time.time()
 
         pygame.display.flip()
         clock.tick(30)
